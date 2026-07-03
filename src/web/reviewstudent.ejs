@@ -1,0 +1,249 @@
+<html<!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Reviewing classification</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    </head>
+
+    <body class="bg-light">
+
+        <nav class="navbar bg-dark border-bottom border-body px-4" data-bs-theme="dark">
+            <a class="navbar-brand fw-bold" href="/classifications">Dashboard</a>
+            <div class="d-flex align-items-center gap-3">
+                <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
+            </div>
+        </nav>
+
+        <div class="container py-4">
+
+            <div class="mb-4">
+                <h2>
+                    <%= student.first_name %>
+                        <%= student.last_name %>
+                </h2>
+                <p class="text-muted mb-0">Student number: <%= student.student_number %>
+                </p>
+            </div>
+
+
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="card border bg-white shadow-sm">
+                        <div class="card-body">
+                            <p class="text-muted small mb-1">Year 2 average</p>
+                            <p class="fs-3 fw-semibold mb-0">
+                                <%= classification.yr2_average %>%
+                            </p>
+                            <p class="text-muted small mb-1">30% contribution</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border bg-white shadow-sm">
+                        <div class="card-body">
+                            <p class="text-muted small mb-1">Year 3 average</p>
+                            <p class="fs-3 fw-semibold mb-0 text-success">
+                                <%= classification.yr3_average %>%
+                            </p>
+                            <p class="text-muted small mb-1">70% contribution</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border bg-white shadow-sm">
+                        <div class="card-body">
+                            <p class="text-muted small mb-1">Final average</p>
+                            <p class="fs-3 fw-semibold mb-0 text-warning">
+                                <%= classification.final_average %>%
+                            </p>
+                            <p class="text-muted small mb-1"> Year 2 + Year 3</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border bg-white shadow-sm">
+                        <div class="card-body">
+                            <p class="text-muted small mb-1">Proposed result</p>
+                            <p class="fs-3 fw-semibold mb-0 text-danger">
+                                <%= classification.proposed_result %>
+                                    <% if (classification.is_overridden) { %>
+                                        <span class="badge bg-info text-dark ms-1">Override</span>
+                                        <% } %>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="card border shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h6 fw-semibold mb-3">Year 1 modules</h2>
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Module</th>
+                                <th>Credits</th>
+                                <th>Mark</th>
+                                <th>Resit</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-group-divider">
+                            <% modules1.forEach(mod=> { %>
+                                <tr>
+                                    <td>
+                                        <%= mod.module_name %>
+                                    </td>
+                                    <td>
+                                        <%= mod.credits %>
+                                    </td>
+                                    <td>
+                                        <%= mod.mark %>%
+                                    </td>
+                                    <td>
+                                        <% if (mod.is_resit) { %>
+                                            <span class="badge bg-warning text-dark">Resit</span>
+                                            <% } else { %>
+                                                <span class="text-muted small">—</span>
+                                                <% } %>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            <div class="card border shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h6 fw-semibold mb-3">Year 2 modules</h2>
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Module</th>
+                                <th>Credits</th>
+                                <th>Mark</th>
+                                <th>Resit</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-group-divider">
+                            <% modules2.forEach(mod=> { %>
+                                <tr>
+                                    <td>
+                                        <%= mod.module_name %>
+                                    </td>
+                                    <td>
+                                        <%= mod.credits %>
+                                    </td>
+                                    <td>
+                                        <%= mod.mark %>%
+                                    </td>
+                                    <td>
+                                        <% if (mod.is_resit) { %>
+                                            <span class="badge bg-warning text-dark">Resit</span>
+                                            <% } else { %>
+                                                <span class="text-muted small">—</span>
+                                                <% } %>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            <div class="card border shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h6 fw-semibold mb-3">Year 3 modules</h2>
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Module</th>
+                                <th>Credits</th>
+                                <th>Mark</th>
+                                <th>Resit</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-group-divider">
+                            <% modules3.forEach(mod=> { %>
+                                <tr>
+                                    <td>
+                                        <%= mod.module_name %>
+                                    </td>
+                                    <td>
+                                        <%= mod.credits %>
+                                    </td>
+                                    <td>
+                                        <%= mod.mark %>%
+                                    </td>
+                                    <td>
+                                        <% if (mod.is_resit) { %>
+                                            <span class="badge bg-warning text-dark">Resit</span>
+                                            <% } else { %>
+                                                <span class="text-muted small">—</span>
+                                                <% } %>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card border shadow-sm mb-4">
+                <div class="card-body">
+                    <form method="post" action="/classifications/students/<%= student.id %>/review">
+
+                        <div class="row g-3 align-items-end mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label mb-1">Final Classification Decision</label>
+                                <select name="final_result" id="final_result" class="form-select form-select-sm">
+                                    <% classificationOptions.forEach(opt=> { %>
+                                        <option value="<%= opt %>" <%=opt===classification.proposed_result ? 'selected'
+                                            : '' %>>
+                                            <%= opt %>
+                                        </option>
+                                        <% }) %>
+                                </select>
+                                <div class="form-check mt-2">
+                                    <input class="form-check-input" type="checkbox" name="is_overridden"
+                                        id="is_overridden" value="1" <%=classification.is_overridden ? 'checked' : ''
+                                        %>>
+                                    <label class="form-check-label small" for="is_overridden">Mark as override</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-8">
+                                <label class="form-label mb-1">Rationale / Notes</label>
+                                <textarea name="rationale" class="form-control form-control-sm" rows="2" required
+                                    placeholder="Confirm the classification is correct, or document any exceptional circumstances..."><%= classification.rationale %></textarea>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary btn-sm">Approve / Override</button>
+                            <a href="/classifications" class="btn btn-outline-secondary btn-sm">Cancel</a>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+
+
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+            crossorigin="anonymous"></script>
+
+    </body>
+
+    </html>

@@ -1,0 +1,30 @@
+{
+  "name": "hedclass",
+  "version": "1.0.0",
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.eeecs.qub.ac.uk/40302656/hedclass.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "src/web/app.js",
+  "scripts": {
+    "start:web": "nodemon src/web/app.js",
+    "start:api": "nodemon src/api/server.js",
+    "start": "concurrently \"npm run start:web\" \"npm run start:api\""
+  },
+  "dependencies": {
+    "axios": "^1.15.0",
+    "bcrypt": "^6.0.0",
+    "ejs": "^5.0.1",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "mysql2": "^3.20.0",
+    "nodemon": "^3.1.14"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

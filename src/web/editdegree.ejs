@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Degree</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="/myUI.css">
+</head>
+<body>
+
+    <nav class="navbar bg-dark border-bottom border-body px-4" data-bs-theme="dark">
+
+        <a class="navbar-brand fw-bold" href="/registry">Dashboard</a>
+        <div class="d-flex align-items-center gap-3">
+            
+            <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
+        </div>
+    </nav>
+
+
+    <div class="registry_body">
+    <div class="registry_container">
+        <h3>Edit degree</h3>
+        <p>Edit degree information</p>
+
+        <div class="degreeForm">
+            <form action="/registry/degrees/<%= degree.id %>/edit" method="post">
+                <div class="mb-3">
+                    <label class="form-label">Name</label>
+                <input type="text" name="name" value="<%= degree.name %>" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Yr 2 weighting</label>
+                    <input type="number" name="yr2_weight" value="<%= degree.weighting_yr2 %>" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Yr 3 weighting</label>
+                    <input type="number" name="yr3_weight" value="<%= degree.weighting_yr3 %>" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Credits per year</label>
+                    <input type="number" name="credits" value="<%= degree.credits_per_year %>" class="form-control" required>
+                </div>
+                <div class="registry_buttons">
+                    <button type="submit" class="btn btn-primary">Edit degree</button>
+                    <a href="/registry" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+
+
+        </div>
+    </div>
+    </div>
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+
+</body>
+</html>

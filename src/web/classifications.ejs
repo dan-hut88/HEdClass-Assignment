@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classifications dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <nav class="navbar bg-dark border-bottom border-body px-4" data-bs-theme="dark">
+        <a class="navbar-brand fw-bold" href="/classifications">Dashboard</a>
+        <div class="d-flex align-items-center gap-3">
+            <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
+        </div>
+    </nav>
+
+
+    <div class="main body py-4 px-4">
+
+        <div class="textInfo">
+            <h2>Classifications Dashboard</h2>
+            <p>Manage and classify your student cohort — <%= degree.name %>
+            </p>
+        </div>
+
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="card border bg-white shadow-sm">
+                    <div class="card-body">
+                        <p class="text-muted small mb-1">Total candidates</p>
+                        <p class="fs-3 fw-semibold mb-0">
+                            <%= stats.total %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border bg-white shadow-sm">
+                    <div class="card-body">
+                        <p class="text-muted small mb-1">Classified</p>
+                        <p class="fs-3 fw-semibold mb-0 text-success">
+                            <%= stats.classified %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border bg-white shadow-sm">
+                    <div class="card-body">
+                        <p class="text-muted small mb-1">Pending review</p>
+                        <p class="fs-3 fw-semibold mb-0 text-warning">
+                            <%= stats.pending %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border bg-white shadow-sm">
+                    <div class="card-body">
+                        <p class="text-muted small mb-1">Unclassified</p>
+                        <p class="fs-3 fw-semibold mb-0 text-danger">
+                            <%= stats.notEligible %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="card border shadow-sm mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="h6 fw-semibold mb-0">Cohort records</h2>
+                    <a href="/classifications/students/add" class="btn btn-primary btn-sm">+ Add student</a>
+                </div>
+                <div class="table-responsive" style="max-height: 320px; overflow-y: auto;">
+                    <table class="table table-hover">
+                        <thead style="position: sticky; top: 0; background: white; z-index: 1;">
+                            <tr>
+                                <th>Name</th>
+                                <th>Student ID</th>
+                                <th>Final avg</th>
+                                <th>Proposed</th>
+                                <th>Final result</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-group-divider">
+                            <% students.forEach(student=> { %>
+                                <tr>
+                                    <td>
+                                        <%= student.first_name %>
+                                            <%= student.last_name %>
+                                    </td>
+                                    <td>
+                                        <%= student.student_number %>
+                                    </td>
+
+                                    <td>
+                                        <%= student.final_average ?? '—' %>
+                                    </td>
+
+                                    <% /* proposed_result badge */%>
+                                        <td>
+                                            <% if (!student.proposed_result) { %>
+                                                <span class="text-muted small">—</span>
+                                                <% } else if (student.proposed_result==='First Class Honours (1st)' ) {
+                                                    %>
+                                                    <span class="badge bg-primary">1st</span>
+                                                    <% } else if (student.proposed_result==='Upper Second Class (2:1)' )
+                                                        { %>
+                                                        <span class="badge bg-success">2:1</span>
+                                                        <% } else if
+                                                            (student.proposed_result==='Lower Second Class (2:2)' ) { %>
+                                                            <span class="badge bg-warning text-dark">2:2</span>
+                                                            <% } else if
+                                                                (student.proposed_result==='Third Class Honours' ) { %>
+                                                                <span class="badge bg-warning text-dark">3rd</span>
+                                                                <% } else if (student.proposed_result==='Fail' ) { %>
+                                                                    <span class="badge bg-danger">Fail</span>
+                                                                    <% } %>
+                                        </td>
+
+                                        <% /* final_result badge */%>
+                                            <td>
+                                                <% if (!student.final_result) { %>
+                                                    <span class="badge bg-secondary">Pending</span>
+                                                    <% } else if (student.final_result==='First Class Honours (1st)' ) {
+                                                        %>
+                                                        <span class="badge bg-primary">1st</span>
+                                                        <% } else if (student.final_result==='Upper Second Class (2:1)'
+                                                            ) { %>
+                                                            <span class="badge bg-success">2:1</span>
+                                                            <% } else if
+                                                                (student.final_result==='Lower Second Class (2:2)' ) {
+                                                                %>
+                                                                <span class="badge bg-warning text-dark">2:2</span>
+                                                                <% } else if
+                                                                    (student.final_result==='Third Class Honours' ) { %>
+                                                                    <span class="badge bg-warning text-dark">3rd</span>
+                                                                    <% } else if (student.final_result==='Fail' ) { %>
+                                                                        <span class="badge bg-danger">Fail</span>
+                                                                        <% } %>
+                                                                            <% if (student.is_overridden) { %>
+                                                                                <span
+                                                                                    class="badge bg-info text-dark ms-1">Override</span>
+                                                                                <% } %>
+                                            </td>
+
+                                            <% /* status badge */%>
+                                                <td>
+                                                    <% if (student.status==='pending_review' ) { %>
+                                                        <span class="badge bg-warning text-dark">Pending review</span>
+                                                        <% } else if (student.status==='overridden' ) { %>
+                                                            <span class="badge bg-info text-dark">Overridden</span>
+                                                            <% } else if (student.status==='approved' ) { %>
+                                                                <span class="badge bg-success">Approved</span>
+                                                                <% } else { %>
+                                                                    <span class="badge bg-danger">Not
+                                                                        classified</span>
+                                                                    <% } %>
+                                                </td>
+
+                                                <td>
+                                                    <% if (student.status==='pending_review' ) { %>
+                                                        <a href="/classifications/students/<%= student.id %>/review"
+                                                            class="btn btn-warning">Review</a>
+
+                                                        <% } else if (student.status==='approved'
+                                                            ||student.status==='overridden' ) { %>
+                                                            <a href="/classifications/students/<%= student.id %>"
+                                                                class="btn btn-success btn-sm">View</a>
+
+                                                            <% } else { %>
+                                                                <a href="/classifications/students/<%= student.id %>/edit"
+                                                                    class="btn btn-outline-secondary btn-sm">Edit</a>
+
+                                                                <% } %>
+                                                                    <form
+                                                                        action="/classifications/students/<%= student.id %>/delete"
+                                                                        method="post" class="d-inline">
+                                                                        <button
+                                                                            class="btn btn-outline-danger btn-sm">Delete</button>
+                                                                    </form>
+                                                </td>
+                                </tr>
+                                <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row g-4 mb-4">
+
+            <div class="col-md-6">
+                <div class="card border shadow-sm h-100">
+                    <div class="card-body">
+                        <h2 class="h6 fw-semibold mb-3">Classification distribution</h2>
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Band</th>
+                                    <th>Count</th>
+                                    <th>%</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-group-divider">
+                                <tr>
+                                    <td><span class="badge bg-primary">1st</span> First Class Honours</td>
+                                    <td>
+                                        <%= distribution.first %>
+                                    </td>
+                                    <td class="text-muted small">
+                                        <%= stats.total> 0 ? ((distribution.first / stats.total) * 100).toFixed(1) :
+                                            '0.0' %>%
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-success">2:1</span> Upper Second</td>
+                                    <td>
+                                        <%= distribution.upper %>
+                                    </td>
+                                    <td class="text-muted small">
+                                        <%= stats.total> 0 ? ((distribution.upper / stats.total) * 100).toFixed(1) :
+                                            '0.0' %>%
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-warning text-dark">2:2</span> Lower Second</td>
+                                    <td>
+                                        <%= distribution.lower %>
+                                    </td>
+                                    <td class="text-muted small">
+                                        <%= stats.total> 0 ? ((distribution.lower / stats.total) * 100).toFixed(1) :
+                                            '0.0' %>%
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-warning text-dark">3rd</span> Third Class</td>
+                                    <td>
+                                        <%= distribution.third %>
+                                    </td>
+                                    <td class="text-muted small">
+                                        <%= stats.total> 0 ? ((distribution.third / stats.total) * 100).toFixed(1) :
+                                            '0.0' %>%
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-danger">Fail</span></td>
+                                    <td>
+                                        <%= distribution.fail %>
+                                    </td>
+                                    <td class="text-muted small">
+                                        <%= stats.total> 0 ? ((distribution.fail / stats.total) * 100).toFixed(1) :
+                                            '0.0' %>%
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card border shadow-sm h-100">
+                    <div class="card-body">
+                        <h2 class="h6 fw-semibold mb-3">Flags to note</h2>
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Flag</th>
+                                    <th>Count</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-group-divider">
+                                <tr>
+                                    <td>
+                                        Overridden cases
+                                        <div class="text-muted small">Cases that have been overridden</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-warning text-dark">
+                                            <%= flags.overridden %>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Borderline cases
+                                        <div class="text-muted small">Within 1% of a band boundary</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-warning text-dark">
+                                            <%= flags.borderline %>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Pending review
+                                        <div class="text-muted small">Require manual check before approval</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-danger">
+                                            <%= flags.pendingReview %>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="d-flex gap-2 mb-5">
+            <form action="/classifications/run" method="POST">
+                <button type="submit" class="btn btn-primary">Run Classifications</button>
+            </form>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
+            </script>
+
+    </div>
+
+</body>
+
+</html>

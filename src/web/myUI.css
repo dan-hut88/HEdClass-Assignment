@@ -1,0 +1,94 @@
+.registry_body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: rgb(240, 242, 245);
+}
+
+
+
+
+.registry_container {
+    width: 500px;
+    max-width: 90vw;
+    padding: 40px;
+    background-color: white;
+    border: 1px solid rgb(221, 221, 221);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+
+}
+
+.registry_buttons  {
+
+    padding-top: 8px;
+    display: flex;
+    gap: 8px;
+    
+
+}
+
+
+.classification_body {
+
+    min-height: 100vh;
+    background-color: rgb(240, 242, 245);
+    padding: 40px 20px;
+}
+
+.classification_container {
+
+    width: 700px;
+    max-width: 90vw;
+    margin: 0 auto;
+}
+
+.classification_card {
+
+    background-color: white;
+    border: 1px solid rgb(221, 221, 221);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin-bottom: 20px;
+}
+
+.cardTitle {
+
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgb(221, 221, 221);
+}
+
+.moduleHeader {
+    display: grid;
+    grid-template-columns: 1fr 110px 80px;
+    gap: 12px;
+    padding: 6px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid rgb(221, 221, 221);
+    margin-bottom: 4px;
+}
+
+.moduleRows {
+    display: grid;
+    grid-template-columns: 1fr 110px 80px;
+    gap: 12px;
+    align-items: center;
+    padding: 8px;
+    border-bottom: 1px solid rgb(240, 242, 245);
+    font-size: 14px;
+}
+
+.classification_buttons {
+    padding-top: 8px;
+    display: flex;
+    gap: 8px;
+}
