@@ -18,8 +18,11 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `40302656`
+-- Database: `hedclass`
 --
+
+CREATE DATABASE IF NOT EXISTS `hedclass`;
+USE `hedclass`;
 
 -- --------------------------------------------------------
 

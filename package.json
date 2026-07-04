@@ -1,13 +1,13 @@
 {
   "name": "hedclass",
   "version": "1.0.0",
-  "description": "",
+  "description": "A degree classification web app for higher-education classification and registry officers (Node.js, Express, EJS, MySQL).",
   "repository": {
     "type": "git",
-    "url": "https://gitlab.eeecs.qub.ac.uk/40302656/hedclass.git"
+    "url": "git+https://github.com/dan-hut88/HEdClass-Assignment.git"
   },
   "license": "ISC",
-  "author": "",
+  "author": "Daniel",
   "type": "module",
   "main": "src/web/app.js",
   "scripts": {
