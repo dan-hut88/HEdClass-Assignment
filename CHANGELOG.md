@@ -2,6 +2,14 @@
 
 Portfolio-rebuild improvements to HEdClass, worked one ticket at a time.
 
+## Ticket 4 — Auth middleware + remove dead code
+- Added a `requireRole(role)` middleware and applied it to all 23 protected routes, replacing the copy-pasted `if (req.session.user && req.session.user.role === …)` block in every handler.
+- Deleted the three large commented-out route blocks (old officer-delete, student-delete, and inline `/classifications/run`) — ~160 lines.
+- Removed the dead `req.session.user.degree_ids` reference in POST `/select-degree` (the property was never set).
+- Kept the small commented-out ownership checks in the student view/edit/review routes as markers for Ticket 8 (Fix IDOR).
+- Pure refactor: `app.js` dropped from ~852 to ~470 lines with no behaviour change. Public routes (`/`, login, `/logout`) left unguarded.
+- **Why:** removes ~200 lines of duplication/dead code and centralises access control in one testable place.
+
 ## Ticket 3 — Remove assignment identifiers
 - Renamed the database from `40302656` to `hedclass` (updated `.env` `DB_NAME`).
 - Renamed `src/seeder/40302656.sql` → `src/seeder/seed.sql`; updated the `Database:` comment and prepended `CREATE DATABASE IF NOT EXISTS` / `USE` so the dump is self-contained.
