@@ -2,6 +2,16 @@
 
 Portfolio-rebuild improvements to HEdClass, worked one ticket at a time.
 
+## Ticket 5 — Modular architecture (routes / controllers / models)
+- Split the monolithic `app.js` into layers:
+  - `middleware/requireRole.js` — the role guard.
+  - `routes/` — `auth.js`, `registry.js`, `classifications.js` (path → controller wiring + role middleware; each router applies its role guard once via `router.use`).
+  - `controllers/` — `authController.js`, `registryController.js`, `classificationsController.js` (request/response, bcrypt, dashboard stat shaping, axios calls to the API).
+  - `models/` — `userModel.js`, `degreeModel.js`, `studentModel.js`, `classificationModel.js` (every SQL query, copied verbatim).
+- `app.js` reduced to ~36 lines: setup, session, and three `app.use()` mounts.
+- Pure refactor — no behaviour change. SQL strings unchanged; only their location moved.
+- **Why:** separates HTTP concerns from data access, makes each layer testable, and removes the single 850-line file.
+
 ## Ticket 4 — Auth middleware + remove dead code
 - Added a `requireRole(role)` middleware and applied it to all 23 protected routes, replacing the copy-pasted `if (req.session.user && req.session.user.role === …)` block in every handler.
 - Deleted the three large commented-out route blocks (old officer-delete, student-delete, and inline `/classifications/run`) — ~160 lines.
