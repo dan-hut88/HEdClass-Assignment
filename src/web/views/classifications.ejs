@@ -184,6 +184,12 @@
                                                             ||student.status==='overridden' ) { %>
                                                             <a href="/classifications/students/<%= student.id %>"
                                                                 class="btn btn-success btn-sm">View</a>
+                                                            <form
+                                                                action="/classifications/students/<%= student.id %>/reopen"
+                                                                method="post" class="d-inline">
+                                                                <button
+                                                                    class="btn btn-outline-warning btn-sm">Reopen</button>
+                                                            </form>
 
                                                             <% } else { %>
                                                                 <a href="/classifications/students/<%= student.id %>/edit"

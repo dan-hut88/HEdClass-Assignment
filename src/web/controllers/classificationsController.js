@@ -220,6 +220,16 @@ export async function deleteStudent(req, res) {
   }
 }
 
+export async function reopenStudent(req, res) {
+  try {
+    await classificationModel.reopen(req.params.id);
+    res.redirect("/classifications");
+  } catch (e) {
+    console.error(e);
+    res.status(500).send("Something went wrong with reopening");
+  }
+}
+
 export async function runClassifications(req, res) {
   try {
     await axios.post("http://localhost:4000/classifications/run", {

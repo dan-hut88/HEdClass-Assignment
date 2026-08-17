@@ -117,16 +117,22 @@ server.post("/classifications/run", async (req, res) => {
         });
 
         const [existing] = await connection.promise().query(
-          `SELECT id FROM classifications WHERE student_id = ?`, [student.id]
+          `SELECT id, status FROM classifications WHERE student_id = ?`, [student.id]
         );
 
         if (existing.length === 0) {
-          await connection.promise().query(`INSERT INTO classifications 
-                                  (student_id, degree_id, yr2_average, yr3_average, final_average, proposed_result, final_result, is_overridden, status, rationale, classified_by) 
+          await connection.promise().query(`INSERT INTO classifications
+                                  (student_id, degree_id, yr2_average, yr3_average, final_average, proposed_result, final_result, is_overridden, status, rationale, classified_by)
                                   VALUES (?, ?, ?, ?, ?, ?, "Pending", 0, 'pending_review', '', ?)`,
             [student.id, student.degree_id, yr2Average, yr3Average, finalAverage,
               proposedResult,officerID]);
+        } else if (existing[0].status === 'pending_review') {
+          await connection.promise().query(`UPDATE classifications
+                                  SET yr2_average = ?, yr3_average = ?, final_average = ?, proposed_result = ?
+                                  WHERE id = ?`,
+            [yr2Average, yr3Average, finalAverage, proposedResult, existing[0].id]);
         }
+        // approved/overridden rows are left untouched — an officer must reopen them first
 
       }
 

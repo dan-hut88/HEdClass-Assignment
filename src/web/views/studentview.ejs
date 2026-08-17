@@ -167,8 +167,12 @@
         </div>
 
         <div class="d-flex gap-2">
-            
             <a href="/classifications" class="btn btn-primary">Back to dashboard</a>
+            <% if (classification && (classification.status === 'approved' || classification.status === 'overridden')) { %>
+                <form action="/classifications/students/<%= student.id %>/reopen" method="post">
+                    <button class="btn btn-outline-warning">Reopen</button>
+                </form>
+            <% } %>
         </div>
 
     </div>

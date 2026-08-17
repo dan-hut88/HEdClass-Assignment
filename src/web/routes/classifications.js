@@ -19,6 +19,7 @@ router.get("/students/:id", classificationsController.getStudent);
 router.get("/students/:id/edit", classificationsController.getEditStudent);
 router.post("/students/:id/edit", classificationsController.postEditStudent);
 router.post("/students/:id/delete", classificationsController.deleteStudent);
+router.post("/students/:id/reopen", classificationsController.reopenStudent);
 
 router.post("/run", classificationsController.runClassifications);
 

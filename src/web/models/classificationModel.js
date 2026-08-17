@@ -13,3 +13,12 @@ export async function updateReview(studentId, finalResult, isOverridden, status,
     [finalResult, isOverridden, status, rationale, classifiedBy, studentId]
   );
 }
+
+export async function reopen(studentId) {
+  await db.promise().query(
+    `UPDATE classifications
+        SET status = 'pending_review', final_result = 'Pending', is_overridden = 0
+        WHERE student_id = ?`,
+    [studentId]
+  );
+}
