@@ -211,6 +211,7 @@
                 <div class="card border shadow-sm h-100">
                     <div class="card-body">
                         <h2 class="h6 fw-semibold mb-3">Classification distribution</h2>
+                        <canvas id="distributionChart" height="220" class="mb-3"></canvas>
                         <table class="table table-hover mb-0">
                             <thead>
                                 <tr>
@@ -349,6 +350,33 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
             </script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"
+            integrity="sha384-NrKB+u6Ts6AtkIhwPixiKTzgSKNblyhlk0Sohlgar9UHUBzai/sgnNNWWd291xqt"
+            crossorigin="anonymous"></script>
+        <script>
+            new Chart(document.getElementById('distributionChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['1st', '2:1', '2:2', '3rd', 'Fail', 'Not eligible'],
+                    datasets: [{
+                        label: 'Students',
+                        data: [
+                            <%= distribution.first %>,
+                            <%= distribution.upper %>,
+                            <%= distribution.lower %>,
+                            <%= distribution.third %>,
+                            <%= distribution.fail %>,
+                            <%= distribution.notEligible %>
+                        ],
+                        backgroundColor: ['#0d6efd', '#198754', '#ffc107', '#ffc107', '#dc3545', '#212529']
+                    }]
+                },
+                options: {
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+                }
+            });
+        </script>
 
     </div>
 
