@@ -77,8 +77,8 @@ Starts both the web app (`http://localhost:3000`) and the REST API (`http://loca
 | Email | Password | Role |
 | --- | --- | --- |
 | admin@hedclass.com | admin123 | registry services officer |
-| j.murphy@hedclass.com | murphy123 | classifications officer (multi-degree) |
-| l.chen@hedclass.com | chen123 | classifications officer |
+| j.murphy@hedclass.com | murphy123 | classifications officer |
+| l.chen@hedclass.com | chen123 | classifications officer (multi-degree) |
 
 ## Project structure
 
