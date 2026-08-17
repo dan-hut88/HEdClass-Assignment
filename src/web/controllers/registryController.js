@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import axios from "axios";
+import apiClient from "../apiClient.js";
 import * as userModel from "../models/userModel.js";
 import * as degreeModel from "../models/degreeModel.js";
 
@@ -63,7 +63,7 @@ export async function postEditOfficer(req, res) {
 export async function deleteOfficer(req, res) {
   try {
     const officerId = req.params.id;
-    await axios.delete(`http://localhost:4000/officers/${officerId}`);
+    await apiClient.delete(`/officers/${officerId}`);
     res.redirect("/registry");
   } catch (e) {
     console.error(e);

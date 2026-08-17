@@ -1,13 +1,19 @@
-import axios from "axios";
+import apiClient from "../apiClient.js";
 import * as degreeModel from "../models/degreeModel.js";
 import * as studentModel from "../models/studentModel.js";
 import * as classificationModel from "../models/classificationModel.js";
+
+// A student belongs to the officer who created them — used to stop one
+// classifications officer reaching another's students by guessing an id.
+function isOwnStudent(req, student) {
+  return !!student && student.created_by === req.session.user.id;
+}
 
 export async function getDashboard(req, res) {
   const degreeId = req.session.user.degree_id;
   const officerId = req.session.user.id;
 
-  const response = await axios.get(`http://localhost:4000/students/${degreeId}?officerId=${officerId}`);
+  const response = await apiClient.get(`/students/${degreeId}?officerId=${officerId}`);
   const students = response.data.data;
 
   const degree = await degreeModel.getById(degreeId);
@@ -95,9 +101,9 @@ export async function getReviewStudent(req, res) {
 
     const student = await studentModel.getById(studentId);
 
-    /*if (!student || student.created_by !== officerId) {
+    if (!isOwnStudent(req, student)) {
       return res.redirect("/classifications");
-    }*/
+    }
 
     const modules1 = await studentModel.getMarksByYear(studentId, '1');
     const modules2 = await studentModel.getMarksByYear(studentId, '2');
@@ -124,6 +130,12 @@ export async function getReviewStudent(req, res) {
 export async function postReviewStudent(req, res) {
   try {
     const studentId = req.params.id;
+    const student = await studentModel.getById(studentId);
+
+    if (!isOwnStudent(req, student)) {
+      return res.redirect("/classifications");
+    }
+
     const { final_result, rationale } = req.body;
     const isOverridden = req.body.is_overridden === '1' ? 1 : 0;
     const officerId = req.session.user.id;
@@ -144,9 +156,9 @@ export async function getStudent(req, res) {
 
     const student = await studentModel.getById(studentId);
 
-    /*if (!student || student.created_by !== officerId) {
+    if (!isOwnStudent(req, student)) {
       return res.redirect("/classifications");
-    }*/
+    }
 
     const modules1 = await studentModel.getMarksByYear(studentId, '1');
     const modules2 = await studentModel.getMarksByYear(studentId, '2');
@@ -167,9 +179,9 @@ export async function getEditStudent(req, res) {
 
     const student = await studentModel.getById(studentId);
 
-    /*if (!student || student.created_by !== officerId) {
+    if (!isOwnStudent(req, student)) {
       return res.redirect("/classifications");
-    }*/
+    }
 
     const degreeId = req.session.user.degree_id;
 
@@ -189,6 +201,12 @@ export async function getEditStudent(req, res) {
 export async function postEditStudent(req, res) {
   try {
     const studentID = req.params.id;
+    const student = await studentModel.getById(studentID);
+
+    if (!isOwnStudent(req, student)) {
+      return res.redirect("/classifications");
+    }
+
     const { snumber, firstName, lastName, year } = req.body;
 
     await studentModel.update(studentID, snumber, firstName, lastName, year);
@@ -212,7 +230,13 @@ export async function postEditStudent(req, res) {
 
 export async function deleteStudent(req, res) {
   try {
-    await axios.delete(`http://localhost:4000/students/${req.params.id}`);
+    const student = await studentModel.getById(req.params.id);
+
+    if (!isOwnStudent(req, student)) {
+      return res.redirect("/classifications");
+    }
+
+    await apiClient.delete(`/students/${req.params.id}`);
     res.redirect("/classifications");
   } catch (e) {
     console.error(e);
@@ -222,6 +246,12 @@ export async function deleteStudent(req, res) {
 
 export async function reopenStudent(req, res) {
   try {
+    const student = await studentModel.getById(req.params.id);
+
+    if (!isOwnStudent(req, student)) {
+      return res.redirect("/classifications");
+    }
+
     await classificationModel.reopen(req.params.id);
     res.redirect("/classifications");
   } catch (e) {
@@ -232,7 +262,7 @@ export async function reopenStudent(req, res) {
 
 export async function runClassifications(req, res) {
   try {
-    await axios.post("http://localhost:4000/classifications/run", {
+    await apiClient.post("/classifications/run", {
       officerID: req.session.user.id,
       degreeId: req.session.user.degree_id
     });
