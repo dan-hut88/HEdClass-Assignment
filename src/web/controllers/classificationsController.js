@@ -25,6 +25,7 @@ export async function getDashboard(req, res) {
     lower: students.filter(s => s.final_result === 'Lower Second Class (2:2)').length,
     third: students.filter(s => s.final_result === 'Third Class Honours').length,
     fail: students.filter(s => s.final_result === 'Fail').length,
+    notEligible: students.filter(s => s.final_result === 'Not eligible for Honours').length,
   };
 
   // flags
@@ -65,11 +66,11 @@ export async function getAddStudent(req, res) {
 
 export async function postAddStudent(req, res) {
   try {
-    const { snumber, firstName, lastName, year } = req.body;
+    const { snumber, firstName, lastName, year, academicYear } = req.body;
     const degreeId = req.session.user.degree_id;
     const officerID = req.session.user.id;
 
-    const studentId = await studentModel.insert(snumber, firstName, lastName, degreeId, year, officerID);
+    const studentId = await studentModel.insert(snumber, firstName, lastName, degreeId, year, academicYear, officerID);
 
     const moduleIds = req.body.moduleIds;
     const marks = req.body.marks;
@@ -78,8 +79,7 @@ export async function postAddStudent(req, res) {
     for (let i = 0; i < moduleIds.length; i++) {
       const isResit = resitIds.includes(String(moduleIds[i])) ? 1 : 0;
       const rawMark = parseFloat(marks[i]);
-      const updatedMark = isResit && rawMark > 40 ? 40 : rawMark;
-      await studentModel.insertMark(studentId, moduleIds[i], updatedMark, isResit);
+      await studentModel.insertMark(studentId, moduleIds[i], rawMark, isResit);
     }
 
     res.redirect("/classifications/students/add");
@@ -110,7 +110,8 @@ export async function getReviewStudent(req, res) {
       'Upper Second Class (2:1)',
       'Lower Second Class (2:2)',
       'Third Class Honours',
-      'Fail'
+      'Fail',
+      'Not eligible for Honours'
     ];
 
     res.render("reviewstudent", { student, modules1, modules2, modules3, classification, classificationOptions });
@@ -199,8 +200,7 @@ export async function postEditStudent(req, res) {
     for (let i = 0; i < moduleIds.length; i++) {
       const isResit = resitIds.includes(String(moduleIds[i])) ? 1 : 0;
       const rawMark = parseFloat(marks[i]);
-      const updatedMark = isResit && rawMark > 40 ? 40 : rawMark;
-      await studentModel.updateMark(studentID, moduleIds[i], updatedMark, isResit);
+      await studentModel.updateMark(studentID, moduleIds[i], rawMark, isResit);
     }
 
     res.redirect("/classifications");

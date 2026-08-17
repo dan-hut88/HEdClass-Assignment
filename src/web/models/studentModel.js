@@ -1,9 +1,9 @@
 import db from "../db.js";
 
-export async function insert(studentNumber, firstName, lastName, degreeId, entryYear, createdBy) {
+export async function insert(studentNumber, firstName, lastName, degreeId, entryYear, academicYear, createdBy) {
   const [result] = await db.promise().query(
-    `INSERT INTO students(student_number, first_name, last_name, degree_id, entry_year, created_by) VALUES (?,?,?,?,?,?)`,
-    [studentNumber, firstName, lastName, degreeId, entryYear, createdBy]
+    `INSERT INTO students(student_number, first_name, last_name, degree_id, entry_year, academic_year, created_by) VALUES (?,?,?,?,?,?,?)`,
+    [studentNumber, firstName, lastName, degreeId, entryYear, academicYear, createdBy]
   );
   return result.insertId;
 }

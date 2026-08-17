@@ -1,6 +1,7 @@
 import "dotenv/config";
 import mysql from "mysql2";
 import express from "express";
+import { classifyStudent } from "./services/classify.js";
 const server = express();
 const PORT = 4000;
 
@@ -84,75 +85,36 @@ server.post("/classifications/run", async (req, res) => {
       const officerID = req.body.officerID;
       const degreeId = req.body.degreeId;
 
-      const [students] = await connection.promise().query(`SELECT s.*, d.weighting_yr2, d.weighting_yr3 
-                                                  FROM students s 
-                                                  JOIN degree d ON s.degree_id = d.id 
+      const [students] = await connection.promise().query(`SELECT s.*, d.weighting_yr2, d.weighting_yr3, d.credits_per_year
+                                                  FROM students s
+                                                  JOIN degree d ON s.degree_id = d.id
                                                   WHERE s.degree_id = ? AND s.created_by = ?`, [degreeId, officerID]);
-
-      function weightedAverage(marks) {
-
-        let totalMarks = 0;
-        let totalCredits = 0;
-
-        for (const m of marks) {
-          let mark = parseFloat(m.mark);
-          
-
-          if (m.is_resit) {
-            mark = Math.min(mark, 40);
-          }
-
-          totalMarks += mark * m.credits;
-          totalCredits += m.credits;
-        }
-
-        return parseFloat((totalMarks / totalCredits).toFixed(2));
-      }
-
-      function classificationResult(average) {
-
-        let result = "";
-
-        if (average >= 70) {
-          result = "First Class Honours (1st)"
-        } else if (average >= 60) {
-          result = "Upper Second Class (2:1)"
-        } else if (average >= 50) {
-          result = "Lower Second Class (2:2)"
-        } else if (average >= 40) {
-          result = "Third Class Honours"
-        } else {
-          result = "Fail"
-        }
-
-        return result;
-
-      }
 
       for (const student of students) {
 
-        const [marks2] = await connection.promise().query(`SELECT sm.mark, sm.is_resit, dm.credits 
-                                                  FROM student_marks sm 
-                                                  JOIN degree_modules dm ON sm.degree_module_id = dm.id 
+        const [marks1] = await connection.promise().query(`SELECT sm.mark, sm.is_resit, dm.credits
+                                                  FROM student_marks sm
+                                                  JOIN degree_modules dm ON sm.degree_module_id = dm.id
+                                                  WHERE sm.student_id = ? AND dm.year = '1'`, [student.id]);
+
+        const [marks2] = await connection.promise().query(`SELECT sm.mark, sm.is_resit, dm.credits
+                                                  FROM student_marks sm
+                                                  JOIN degree_modules dm ON sm.degree_module_id = dm.id
                                                   WHERE sm.student_id = ? AND dm.year = '2'`, [student.id]);
 
 
-        const [marks3] = await connection.promise().query(`SELECT sm.mark, sm.is_resit, dm.credits 
-                                                  FROM student_marks sm 
-                                                  JOIN degree_modules dm ON sm.degree_module_id = dm.id 
+        const [marks3] = await connection.promise().query(`SELECT sm.mark, sm.is_resit, dm.credits
+                                                  FROM student_marks sm
+                                                  JOIN degree_modules dm ON sm.degree_module_id = dm.id
                                                   WHERE sm.student_id = ? AND dm.year = '3'`, [student.id]);
 
 
-        const yr2Average = weightedAverage(marks2);
-        const yr3Average = weightedAverage(marks3);
-        const w2 = parseFloat(student.weighting_yr2) / 100;
-        const w3 = parseFloat(student.weighting_yr3) / 100;
-
-        const finalAverage = parseFloat(((yr2Average * w2) + (yr3Average * w3)).toFixed(2));
-
-
-
-        const proposedResult = classificationResult(finalAverage);
+        const { yr2Average, yr3Average, finalAverage, proposedResult } = classifyStudent({
+          yearMarks: { 1: marks1, 2: marks2, 3: marks3 },
+          creditsPerYear: student.credits_per_year,
+          weightingYr2: student.weighting_yr2,
+          weightingYr3: student.weighting_yr3,
+        });
 
         const [existing] = await connection.promise().query(
           `SELECT id FROM classifications WHERE student_id = ?`, [student.id]

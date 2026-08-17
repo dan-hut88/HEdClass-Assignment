@@ -126,7 +126,10 @@
                                                                 <span class="badge bg-warning text-dark">3rd</span>
                                                                 <% } else if (student.proposed_result==='Fail' ) { %>
                                                                     <span class="badge bg-danger">Fail</span>
-                                                                    <% } %>
+                                                                    <% } else if
+                                                                        (student.proposed_result==='Not eligible for Honours' ) { %>
+                                                                        <span class="badge bg-dark">Not eligible</span>
+                                                                        <% } %>
                                         </td>
 
                                         <% /* final_result badge */%>
@@ -148,7 +151,10 @@
                                                                     <span class="badge bg-warning text-dark">3rd</span>
                                                                     <% } else if (student.final_result==='Fail' ) { %>
                                                                         <span class="badge bg-danger">Fail</span>
-                                                                        <% } %>
+                                                                        <% } else if
+                                                                            (student.final_result==='Not eligible for Honours' ) { %>
+                                                                            <span class="badge bg-dark">Not eligible</span>
+                                                                            <% } %>
                                                                             <% if (student.is_overridden) { %>
                                                                                 <span
                                                                                     class="badge bg-info text-dark ms-1">Override</span>
@@ -263,6 +269,16 @@
                                     <td class="text-muted small">
                                         <%= stats.total> 0 ? ((distribution.fail / stats.total) * 100).toFixed(1) :
                                             '0.0' %>%
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-dark">Not eligible</span> Not eligible for Honours</td>
+                                    <td>
+                                        <%= distribution.notEligible %>
+                                    </td>
+                                    <td class="text-muted small">
+                                        <%= stats.total> 0 ? ((distribution.notEligible / stats.total) * 100).toFixed(1)
+                                            : '0.0' %>%
                                     </td>
                                 </tr>
                             </tbody>
