@@ -23,6 +23,11 @@ function marksInRange(marks) {
   return [].concat(marks || []).every(isMarkInRange);
 }
 
+function csvField(value) {
+  const str = String(value ?? "");
+  return /[",\r\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str;
+}
+
 export async function getDashboard(req, res) {
   const degreeId = req.session.user.degree_id;
   const officerId = req.session.user.id;
@@ -65,6 +70,38 @@ export async function getDashboard(req, res) {
     distribution,
     flags
   });
+}
+
+export async function exportCsv(req, res) {
+  try {
+    const degreeId = req.session.user.degree_id;
+    const officerId = req.session.user.id;
+
+    const response = await apiClient.get(`/students/${degreeId}?officerId=${officerId}`);
+    const students = response.data.data;
+
+    const headers = ["Student number", "First name", "Last name", "Yr2 average", "Yr3 average", "Final average", "Result", "Status", "Overridden"];
+    const rows = students.map(s => [
+      s.student_number,
+      s.first_name,
+      s.last_name,
+      s.yr2_average,
+      s.yr3_average,
+      s.final_average,
+      s.final_result,
+      s.status,
+      s.is_overridden ? "Yes" : "No",
+    ]);
+
+    const csv = [headers, ...rows].map(row => row.map(csvField).join(",")).join("\r\n");
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", "attachment; filename=\"classifications.csv\"");
+    res.send(csv);
+  } catch (e) {
+    console.error(e);
+    res.status(500).send("Something went wrong exporting the cohort");
+  }
 }
 
 export async function getAddStudent(req, res) {

@@ -8,6 +8,7 @@ const router = express.Router();
 router.use(requireRole("classifications officer"));
 
 router.get("/", classificationsController.getDashboard);
+router.get("/export", classificationsController.exportCsv);
 
 router.get("/students/add", classificationsController.getAddStudent);
 router.post("/students/add", classificationsController.postAddStudent);
