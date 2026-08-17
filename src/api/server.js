@@ -143,6 +143,11 @@ server.post("/classifications/run", async (req, res) => {
 
       }
 
+      await connection.promise().query(
+        `INSERT INTO audit_log (user_id, action, entity, entity_id, details) VALUES (?, 'run_classifications', 'degree', ?, ?)`,
+        [officerID, degreeId, `Ran classification for ${students.length} students`]
+      );
+
       res.json({ info: 'Classifications complete' });
 
 

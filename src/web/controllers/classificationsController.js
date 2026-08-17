@@ -2,6 +2,7 @@ import apiClient from "../apiClient.js";
 import * as degreeModel from "../models/degreeModel.js";
 import * as studentModel from "../models/studentModel.js";
 import * as classificationModel from "../models/classificationModel.js";
+import * as auditLogModel from "../models/auditLogModel.js";
 import { isPresent, isMarkInRange } from "../utils/validate.js";
 
 const CLASSIFICATION_OPTIONS = [
@@ -196,6 +197,7 @@ export async function postReviewStudent(req, res) {
     const isOverridden = req.body.is_overridden === '1' ? 1 : 0;
     const officerId = req.session.user.id;
     const newStatus = isOverridden ? 'overridden' : 'approved';
+    const classification = await classificationModel.getByStudentId(studentId);
 
     const errors = [];
     if (!CLASSIFICATION_OPTIONS.includes(final_result)) errors.push("Select a valid classification result.");
@@ -207,6 +209,14 @@ export async function postReviewStudent(req, res) {
     }
 
     await classificationModel.updateReview(studentId, final_result, isOverridden, newStatus, rationale, officerId);
+
+    await auditLogModel.log(
+      officerId,
+      isOverridden ? "override" : "approve",
+      "classification",
+      studentId,
+      `${classification.proposed_result} -> ${final_result}`
+    );
 
     req.session.flash = { type: "success", message: isOverridden ? "Classification overridden." : "Classification approved." };
     res.redirect("/classifications");
@@ -315,6 +325,7 @@ export async function deleteStudent(req, res) {
     }
 
     await apiClient.delete(`/students/${req.params.id}`);
+    await auditLogModel.log(req.session.user.id, "delete", "student", req.params.id, `Deleted student ${student.student_number}`);
     req.session.flash = { type: "success", message: "Student deleted." };
   } catch (e) {
     req.session.flash = { type: "error", message: e.response?.data?.error || "Something went wrong with deletion." };
@@ -331,11 +342,22 @@ export async function reopenStudent(req, res) {
     }
 
     await classificationModel.reopen(req.params.id);
+    await auditLogModel.log(req.session.user.id, "reopen", "classification", req.params.id, "Status reset to pending_review");
     req.session.flash = { type: "success", message: "Student reopened for review." };
     res.redirect("/classifications");
   } catch (e) {
     console.error(e);
     res.status(500).send("Something went wrong with reopening");
+  }
+}
+
+export async function getActivity(req, res) {
+  try {
+    const activity = await auditLogModel.getForUser(req.session.user.id);
+    res.render("activity", { activity });
+  } catch (e) {
+    console.error(e);
+    res.status(500).send("Something went wrong loading activity");
   }
 }
 
