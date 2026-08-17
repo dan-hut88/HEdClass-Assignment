@@ -1,22 +1,14 @@
-<html<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= student.first_name %> <%= student.last_name %> — HEdClass</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <%- include('partials/head', { title: `${student.first_name} ${student.last_name}` }) %>
 </head>
 
 <body class="bg-light">
 
-    <nav class="navbar bg-dark border-bottom border-body px-4" data-bs-theme="dark">
-        <a class="navbar-brand fw-bold" href="/classifications">Dashboard</a>
-        <div class="d-flex align-items-center gap-3">
-            <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
-        </div>
-    </nav>
+    <%- include('partials/navbar', { dashboardHref: '/classifications' }) %>
+    <%- include('partials/flash') %>
 
     <div class="container py-4">
 
@@ -169,7 +161,8 @@
         <div class="d-flex gap-2">
             <a href="/classifications" class="btn btn-primary">Back to dashboard</a>
             <% if (classification && (classification.status === 'approved' || classification.status === 'overridden')) { %>
-                <form action="/classifications/students/<%= student.id %>/reopen" method="post">
+                <form action="/classifications/students/<%= student.id %>/reopen" method="post"
+                    onsubmit="return confirm('Reopen this student for review? Their status will reset to pending.')">
                     <button class="btn btn-outline-warning">Reopen</button>
                 </form>
             <% } %>

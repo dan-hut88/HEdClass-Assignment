@@ -15,6 +15,7 @@ export async function login(req, res) {
     const degreeCount = rows.length;
 
     if (degreeCount === 0) {
+      req.session.flash = { type: "error", message: "Invalid email or password." };
       return res.redirect("/");
     }
 
@@ -22,6 +23,7 @@ export async function login(req, res) {
     const match = await bcrypt.compare(userPassword, user.password_hash);
 
     if (!match) {
+      req.session.flash = { type: "error", message: "Invalid email or password." };
       return res.redirect("/");
     }
 

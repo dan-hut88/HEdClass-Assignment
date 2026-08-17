@@ -27,6 +27,12 @@ app.use(session({
   cookie: { maxAge: hour }
 }));
 
+app.use((req, res, next) => {
+  res.locals.flash = req.session.flash || null;
+  delete req.session.flash;
+  next();
+});
+
 app.use("/", authRouter);
 app.use("/registry", registryRouter);
 app.use("/classifications", classificationsRouter);

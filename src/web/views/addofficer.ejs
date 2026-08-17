@@ -1,24 +1,15 @@
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Officer — HEdClass</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link href="/myUI.css" rel="stylesheet">
+    <%- include('partials/head', { title: 'Add officer' }) %>
 </head>
 
 <body class="bg-light">
 
-    <nav class="navbar bg-dark border-bottom border-body px-4" data-bs-theme="dark">
-        <a class="navbar-brand fw-bold" href="/registry">Dashboard</a>
-        <div class="d-flex align-items-center gap-3">
-            <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
-        </div>
-    </nav>
+    <%- include('partials/navbar', { dashboardHref: '/registry' }) %>
+    <%- include('partials/flash') %>
 
-    
     <div class="registry_body">
         <div class="registry_container">
             <h3>Add officer</h3>
@@ -48,7 +39,10 @@
             </div>
         </div>
     </div>
-    
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
 
 </body>
 

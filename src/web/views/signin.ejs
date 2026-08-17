@@ -2,15 +2,12 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign in page</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link href="myUI.css">
+    <%- include('partials/head', { title: 'Sign in' }) %>
 </head>
 
 <body>
+
+    <%- include('partials/flash') %>
 
     <div class="d-flex justify-content-center align-items-center vh-100">
         <div class="card shadow-sm p-4" style="width: 100%; max-width: 500px;">
@@ -19,15 +16,15 @@
                     class="img-fluid">
                 <h2 class="card-title text-center mb-4">Sign In</h2>
 
-                <form action="/", method="POST" >
+                <form action="/" method="POST">
                     <div class="mb-3">
                         <label class="form-label">Email address</label>
-                        <input type="email" name="emailField" class="form-control" placeholder="name@example.com">
+                        <input type="email" name="emailField" class="form-control" placeholder="name@example.com" required>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Password</label>
-                        <input type="password" name="passwordField" class="form-control">
+                        <input type="password" name="passwordField" class="form-control" required>
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100">Login</button>
@@ -35,7 +32,6 @@
             </div>
         </div>
     </div>
-    
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"

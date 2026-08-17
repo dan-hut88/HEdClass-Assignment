@@ -2,11 +2,25 @@ import apiClient from "../apiClient.js";
 import * as degreeModel from "../models/degreeModel.js";
 import * as studentModel from "../models/studentModel.js";
 import * as classificationModel from "../models/classificationModel.js";
+import { isPresent, isMarkInRange } from "../utils/validate.js";
+
+const CLASSIFICATION_OPTIONS = [
+  'First Class Honours (1st)',
+  'Upper Second Class (2:1)',
+  'Lower Second Class (2:2)',
+  'Third Class Honours',
+  'Fail',
+  'Not eligible for Honours'
+];
 
 // A student belongs to the officer who created them — used to stop one
 // classifications officer reaching another's students by guessing an id.
 function isOwnStudent(req, student) {
   return !!student && student.created_by === req.session.user.id;
+}
+
+function marksInRange(marks) {
+  return [].concat(marks || []).every(isMarkInRange);
 }
 
 export async function getDashboard(req, res) {
@@ -76,11 +90,24 @@ export async function postAddStudent(req, res) {
     const degreeId = req.session.user.degree_id;
     const officerID = req.session.user.id;
 
-    const studentId = await studentModel.insert(snumber, firstName, lastName, degreeId, year, academicYear, officerID);
-
     const moduleIds = req.body.moduleIds;
     const marks = req.body.marks;
     const resitIds = req.body.isResit ? [].concat(req.body.isResit).map(String) : [];
+
+    const errors = [];
+    if (!isPresent(snumber)) errors.push("Student number is required.");
+    if (!isPresent(firstName)) errors.push("First name is required.");
+    if (!isPresent(lastName)) errors.push("Last name is required.");
+    if (!isPresent(year)) errors.push("Entry year is required.");
+    if (!isPresent(academicYear)) errors.push("Academic year is required.");
+    if (!marksInRange(marks)) errors.push("All marks must be between 0 and 100.");
+
+    if (errors.length > 0) {
+      req.session.flash = { type: "error", message: errors.join(" ") };
+      return res.redirect("/classifications/students/add");
+    }
+
+    const studentId = await studentModel.insert(snumber, firstName, lastName, degreeId, year, academicYear, officerID);
 
     for (let i = 0; i < moduleIds.length; i++) {
       const isResit = resitIds.includes(String(moduleIds[i])) ? 1 : 0;
@@ -88,7 +115,8 @@ export async function postAddStudent(req, res) {
       await studentModel.insertMark(studentId, moduleIds[i], rawMark, isResit);
     }
 
-    res.redirect("/classifications/students/add");
+    req.session.flash = { type: "success", message: `${firstName} ${lastName} added.` };
+    res.redirect("/classifications");
   } catch (e) {
     console.error(e);
     res.status(500).send("Something wrong with adding");
@@ -111,16 +139,7 @@ export async function getReviewStudent(req, res) {
 
     const classification = await classificationModel.getByStudentId(studentId);
 
-    const classificationOptions = [
-      'First Class Honours (1st)',
-      'Upper Second Class (2:1)',
-      'Lower Second Class (2:2)',
-      'Third Class Honours',
-      'Fail',
-      'Not eligible for Honours'
-    ];
-
-    res.render("reviewstudent", { student, modules1, modules2, modules3, classification, classificationOptions });
+    res.render("reviewstudent", { student, modules1, modules2, modules3, classification, classificationOptions: CLASSIFICATION_OPTIONS });
   } catch (e) {
     console.error(e);
     res.status(500).send("Something went wrong");
@@ -141,8 +160,18 @@ export async function postReviewStudent(req, res) {
     const officerId = req.session.user.id;
     const newStatus = isOverridden ? 'overridden' : 'approved';
 
+    const errors = [];
+    if (!CLASSIFICATION_OPTIONS.includes(final_result)) errors.push("Select a valid classification result.");
+    if (!isPresent(rationale)) errors.push("Rationale is required.");
+
+    if (errors.length > 0) {
+      req.session.flash = { type: "error", message: errors.join(" ") };
+      return res.redirect(`/classifications/students/${studentId}/review`);
+    }
+
     await classificationModel.updateReview(studentId, final_result, isOverridden, newStatus, rationale, officerId);
 
+    req.session.flash = { type: "success", message: isOverridden ? "Classification overridden." : "Classification approved." };
     res.redirect("/classifications");
   } catch (e) {
     console.log(e);
@@ -208,12 +237,23 @@ export async function postEditStudent(req, res) {
     }
 
     const { snumber, firstName, lastName, year } = req.body;
-
-    await studentModel.update(studentID, snumber, firstName, lastName, year);
-
     const moduleIds = req.body.moduleIds;
     const marks = req.body.marks;
     const resitIds = req.body.isResit ? [].concat(req.body.isResit).map(String) : [];
+
+    const errors = [];
+    if (!isPresent(snumber)) errors.push("Student number is required.");
+    if (!isPresent(firstName)) errors.push("First name is required.");
+    if (!isPresent(lastName)) errors.push("Last name is required.");
+    if (!isPresent(year)) errors.push("Entry year is required.");
+    if (!marksInRange(marks)) errors.push("All marks must be between 0 and 100.");
+
+    if (errors.length > 0) {
+      req.session.flash = { type: "error", message: errors.join(" ") };
+      return res.redirect(`/classifications/students/${studentID}/edit`);
+    }
+
+    await studentModel.update(studentID, snumber, firstName, lastName, year);
 
     for (let i = 0; i < moduleIds.length; i++) {
       const isResit = resitIds.includes(String(moduleIds[i])) ? 1 : 0;
@@ -221,6 +261,7 @@ export async function postEditStudent(req, res) {
       await studentModel.updateMark(studentID, moduleIds[i], rawMark, isResit);
     }
 
+    req.session.flash = { type: "success", message: `${firstName} ${lastName} updated.` };
     res.redirect("/classifications");
   } catch (e) {
     console.error(e);
@@ -237,11 +278,11 @@ export async function deleteStudent(req, res) {
     }
 
     await apiClient.delete(`/students/${req.params.id}`);
-    res.redirect("/classifications");
+    req.session.flash = { type: "success", message: "Student deleted." };
   } catch (e) {
-    console.error(e);
-    res.status(500).send("Something went wrong with deletion");
+    req.session.flash = { type: "error", message: e.response?.data?.error || "Something went wrong with deletion." };
   }
+  res.redirect("/classifications");
 }
 
 export async function reopenStudent(req, res) {
@@ -253,6 +294,7 @@ export async function reopenStudent(req, res) {
     }
 
     await classificationModel.reopen(req.params.id);
+    req.session.flash = { type: "success", message: "Student reopened for review." };
     res.redirect("/classifications");
   } catch (e) {
     console.error(e);
@@ -267,6 +309,7 @@ export async function runClassifications(req, res) {
       degreeId: req.session.user.degree_id
     });
 
+    req.session.flash = { type: "success", message: "Classifications run." };
     res.redirect(`/classifications/`);
   } catch (e) {
     console.error(e);
