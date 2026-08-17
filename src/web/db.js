@@ -10,7 +10,7 @@ const db = mysql.createPool({
 });
 
 db.getConnection((err) => {
-    if (err) return console.log(err.message);
+    if (err) return console.error(err.message);
     console.log("connected successfully");
 });
 

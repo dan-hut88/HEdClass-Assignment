@@ -25,7 +25,7 @@ const connection = mysql.createPool({
 });
 
 connection.getConnection((err) => {
-  if (err) return console.log(err);
+  if (err) return console.error(err);
   console.log("connected to local mysql db");
 });
 

@@ -221,7 +221,7 @@ export async function postReviewStudent(req, res) {
     req.session.flash = { type: "success", message: isOverridden ? "Classification overridden." : "Classification approved." };
     res.redirect("/classifications");
   } catch (e) {
-    console.log(e);
+    console.error(e);
     res.status(500).send("Something went wrong with review");
   }
 }
